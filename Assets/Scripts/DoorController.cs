@@ -28,7 +28,7 @@ public class DoorController : MonoBehaviour
     void OnInteract(InputAction.CallbackContext ctx)
     {
         Debug.Log("нажатие");
-        if (Vector3.Distance(playerSystem.self.transform.position, transform.position) < 3f)
+        if (Vector3.Distance(playerSystem.gameObject.transform.position, transform.position) < 3f)
         {
             StartCoroutine(LowerDoor());
         }
