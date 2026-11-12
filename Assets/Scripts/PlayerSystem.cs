@@ -5,125 +5,120 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof (PlayerCamera))]
 public class PlayerSystem : MonoBehaviour
 {
-    public GameObject self;
-    public static PlayerSystem Instance { get; private set; } 
-    
-    public float speed = 3;
-    public float jumpHeight = 1;
+    public static PlayerSystem Instance { get; private set; }
 
-    private Animator animator;
-
-    private PlayerCamera playerCamera;
-    private CharacterController controller; 
-    private bool isGrounded;
-    private Vector3 velocity;
+    public float speed = 3f;
+    public float jumpHeight = 1f;
+    public float rotationSpeed = 10f;
 
     public InputActionAsset inputActions;
 
+    // Кэшированные компоненты
+    private Animator animator;
+    private PlayerCamera playerCamera;
+    private CharacterController controller;
+    private Transform mainCameraTransform;
+
+    // Действия ввода
+    private InputActionMap playerActionMap;
     private InputAction moveAction;
-    private Vector2 moveAmt; // amt = amount - значение
+    private InputAction jumpAction;
+    private InputAction lookAction;
+    public InputAction interactAction { get; private set; }
 
-    private InputAction jumpAction; 
-    private InputAction lookAction; 
-
-    public InputAction interactAction;
+    // Физика и состояние
+    private bool isGrounded;
+    private float verticalVelocity;
 
 
     void Awake()
     {
-        self = gameObject;
-
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
 
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponent<PlayerCamera>();
         animator = GetComponent<Animator>();
 
-        moveAction = InputSystem.actions.FindAction("Move");
-        jumpAction = InputSystem.actions.FindAction("Jump");
-        lookAction = InputSystem.actions.FindAction("Look");
-        interactAction = InputSystem.actions.FindAction("Interact");
+        if (Camera.main != null)
+        {
+            mainCameraTransform = Camera.main.transform;
+        }
+
+        // Берем действия напрямую из назначенного ассета
+        playerActionMap = inputActions.FindActionMap("Player", true);
+        moveAction = playerActionMap.FindAction("Move", true);
+        jumpAction = playerActionMap.FindAction("Jump", true);
+        lookAction = playerActionMap.FindAction("Look", true);
+        interactAction = playerActionMap.FindAction("Interact", true);
     }
 
-    // Запускается при появлении объекта на сцене
     void OnEnable()
     {
-        // Привязали карту взаимодействий при появлении персонажа
-        inputActions.FindActionMap("Player").Enable();
+        playerActionMap.Enable();
         jumpAction.performed += Jump;
-        
     }
 
     void OnDisable()
     {
-        // Отвязали карту взаимодействий при удалении персонажа
-        inputActions.FindActionMap("Player").Disable();
         jumpAction.performed -= Jump;
+        playerActionMap.Disable();
     }
-
 
     void Update()
     {
-        Debug.Log(controller.isGrounded);
-
+        float dt = Time.deltaTime;
         isGrounded = controller.isGrounded;
 
-        // Прижать к земле
-        if (isGrounded && velocity.y < 0)
+        if (isGrounded && verticalVelocity < 0f)
         {
-            velocity.y = -2f;
+            verticalVelocity = -2f;
         }
 
-        Transform cam = Camera.main.transform;
-        Vector3 forward = cam.forward.normalized;
-        Vector3 right = cam.right.normalized;
-        
-        forward.y = 0;
-        right.y = 0; 
+        Vector2 moveAmt = moveAction.ReadValue<Vector2>();
+        Vector3 move = Vector3.zero;
 
-        moveAmt = moveAction.ReadValue<Vector2>();  
-        animator.SetFloat("speed_horizontal", moveAmt.magnitude);
-
-        // Окончательный вектор
-        Vector3 move = right * moveAmt.x + forward * moveAmt.y; 
-        
-        if (move != Vector3.zero)
+        // Считаем направление и поворот только если игрок нажимает кнопки движения
+        if (moveAmt.sqrMagnitude > 0.001f && mainCameraTransform != null)
         {
-            move.y = 0;
+            Vector3 forward = mainCameraTransform.forward;
+            Vector3 right = mainCameraTransform.right;
+            forward.y = 0f;
+            right.y = 0f;
+            forward.Normalize();
+            right.Normalize();
+
+            move = right * moveAmt.x + forward * moveAmt.y;
+
             Quaternion targetRotation = Quaternion.LookRotation(move);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                10f * Time.deltaTime
-            );
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * dt);
         }
-        controller.Move(move * speed * Time.deltaTime);
 
-        velocity.y += Physics.gravity.y * Time.deltaTime;
+        verticalVelocity += Physics.gravity.y * dt;
 
-        animator.SetFloat("speed_vertical", controller.velocity.y);
+        // Обновление аниматора
+        animator.SetFloat("speed_horizontal", moveAmt.magnitude);
+        animator.SetFloat("speed_vertical", Mathf.Abs(verticalVelocity));
+        animator.SetBool("isGrounded", isGrounded);
 
-        controller.Move(velocity * Time.deltaTime);
+        // Итоговое перемещение
+        Vector3 finalMove = move * speed;
+        finalMove.y = verticalVelocity;
+        controller.Move(finalMove * dt);
 
         playerCamera.lookAmt = lookAction.ReadValue<Vector2>();
     }
 
     void Jump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && isGrounded)
+        if (isGrounded)
         {
-            // Закон сохранения энергии 
             animator.SetTrigger("Jump");
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
         }
     }
 }
-
-
