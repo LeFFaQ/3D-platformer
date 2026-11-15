@@ -3,9 +3,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof (PlayerCamera))]
+[RequireComponent(typeof (CharacterHealth))]
 public class PlayerSystem : MonoBehaviour
 {
     public static PlayerSystem Instance { get; private set; }
+    public CharacterHealth playerHealth;
 
     public float speed = 3f;
     public float jumpHeight = 1f;
@@ -16,6 +18,7 @@ public class PlayerSystem : MonoBehaviour
     // Кэшированные компоненты
     private Animator animator;
     private PlayerCamera playerCamera;
+    
     private CharacterController controller;
     private Transform mainCameraTransform;
 
@@ -43,6 +46,7 @@ public class PlayerSystem : MonoBehaviour
         controller = GetComponent<CharacterController>();
         playerCamera = GetComponent<PlayerCamera>();
         animator = GetComponent<Animator>();
+        playerHealth = GetComponent<CharacterHealth>();
 
         if (Camera.main != null)
         {
