@@ -10,14 +10,14 @@ public class DoorController : MonoBehaviour
     private Vector3 originalPosition;
     private bool isOpening = false;
 
-    private PlayerSystem playerSystem;
+    //private PlayerSystem playerSystem;
 
     void Start()
     {
         originalPosition = transform.position;
 
-        playerSystem = PlayerSystem.Instance;
-        playerSystem.interactAction.canceled += OnInteract;
+        //playerSystem = PlayerSystem.Instance;
+        //playerSystem.interactAction.canceled += OnInteract;
 
         //playerSystem.interactAction.started;   - действие началось или нажатие
         //playerSystem.interactAction.performed; - нажатие с небольшой задержкой        
@@ -28,10 +28,10 @@ public class DoorController : MonoBehaviour
     void OnInteract(InputAction.CallbackContext ctx)
     {
         Debug.Log("нажатие");
-        if (Vector3.Distance(playerSystem.gameObject.transform.position, transform.position) < 3f)
-        {
-            StartCoroutine(LowerDoor());
-        }
+        // if (Vector3.Distance(playerSystem.gameObject.transform.position, transform.position) < 3f)
+        // {
+        //     StartCoroutine(LowerDoor());
+        // }
 
     }
 

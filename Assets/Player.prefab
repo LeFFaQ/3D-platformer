@@ -225,6 +225,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ede2fa0a8ea2e84fae78fc6df18c9f3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8159543766539524148}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ede2fa0a8ea2e84fae78fc6df18c9f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2859866825803870956}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5ede2fa0a8ea2e84fae78fc6df18c9f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8601156386942076775}
   m_SourcePrefab: {fileID: 100100000, guid: 5ede2fa0a8ea2e84fae78fc6df18c9f3, type: 3}
 --- !u!4 &4919197805421509388 stripped
 Transform:
@@ -292,17 +298,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8548ab2527ae9f64d9de78a793351a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSystem
-  self: {fileID: 0}
   speed: 3
   jumpHeight: 1
+  rotationSpeed: 10
+  movementReference: {fileID: 0}
+--- !u!114 &2859866825803870956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696861096216355254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b963fef221842b4ea78a01500d645f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterHealth
+  m_health: 5
+--- !u!114 &8601156386942076775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5696861096216355254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18b6fce14a011d14992390483124f7a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInputHandler
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  interactAction:
-    m_Name: Interact
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 4f1a0ea8-af48-4bd2-bf84-2b97cb4f0de3
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
-    m_Priority: 0

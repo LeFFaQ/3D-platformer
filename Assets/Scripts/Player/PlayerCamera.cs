@@ -11,16 +11,22 @@ public class PlayerCamera : MonoBehaviour
     public float minVerticalAngle = -30f;
     public float maxVerticalAngle = 75f;
 
-    public Vector2 lookAmt;
+    private PlayerInputHandler input;
+
     private float horizontalAngle;
     private float verticalAngle;
+
+    void Awake()
+    {
+        input = GetComponent<PlayerInputHandler>();
+    }
 
     void LateUpdate()
     {
         if (target == null) return;
 
-        horizontalAngle += lookAmt.x * sensitivity;
-        verticalAngle -= lookAmt.y * sensitivity;
+        horizontalAngle += input.Look.x * sensitivity;
+        verticalAngle -= input.Look.y * sensitivity;
 
         verticalAngle = Mathf.Clamp(
             verticalAngle,

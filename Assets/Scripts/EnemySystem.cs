@@ -32,10 +32,10 @@ public class EnemySystem : MonoBehaviour
 
     void Start()
     {
-        if (target != null &&  PlayerSystem.Instance != null)
-        {
-            target = PlayerSystem.Instance.transform;
-        }
+        // if (target != null &&  PlayerSystem.Instance != null)
+        // {
+        //     target = PlayerSystem.Instance.transform;
+        // }
     }
 
     void Update()
