@@ -17,7 +17,7 @@ public class PlayerMotor : MonoBehaviour
     
     private PlayerInputHandler input;
     
-    private Camera mainCamera;
+    private PlayerCamera playerCamera;
 
     private float verticalVelocity;
     
@@ -30,10 +30,10 @@ public class PlayerMotor : MonoBehaviour
 
         controller = GetComponent<CharacterController>();
         input = GetComponent<PlayerInputHandler>();
-        mainCamera = Camera.main;
+        playerCamera = GetComponent<PlayerCamera>();
 
-        if (movementReference == null && mainCamera != null)
-            movementReference = mainCamera.transform;
+        if (movementReference == null && playerCamera != null)
+            movementReference = playerCamera.GetMovementReference();
 
     }
 

@@ -3,48 +3,47 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
 
-    public Transform target;
-    public float distance = 5f;
-    public float height = 1f;
-    public float sensitivity = 1f;
+    [Header("References")] 
+    [SerializeField] private Transform yawPoint; // вокруг объекта
+    [SerializeField] private Transform pitchPoint; // вверх-вниз камеры
 
-    public float minVerticalAngle = -30f;
-    public float maxVerticalAngle = 75f;
+
+    [Header("Settings")]
+    [SerializeField] private float sensitivity = 1f;
+
+    [SerializeField] private float minPitch = -30f;
+    [SerializeField] private float maxPitch = 75f;
 
     private PlayerInputHandler input;
 
-    private float horizontalAngle;
-    private float verticalAngle;
+    private float yaw;
+    private float pitch;
 
     void Awake()
     {
         input = GetComponent<PlayerInputHandler>();
+
+        if (yawPoint == null)
+            yawPoint = transform;
+        
+        if (pitchPoint == null) 
+            pitchPoint = yawPoint;
     }
 
-    void LateUpdate()
+        void LateUpdate()
     {
-        if (target == null) return;
+        Vector2 lookInput = input.Look;
 
-        horizontalAngle += input.Look.x * sensitivity;
-        verticalAngle -= input.Look.y * sensitivity;
+        yaw += lookInput.x * sensitivity;
+        pitch -= lookInput.y * sensitivity;
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        verticalAngle = Mathf.Clamp(
-            verticalAngle,
-            minVerticalAngle,
-            maxVerticalAngle
-        );     
+        yawPoint.rotation = Quaternion.Euler(0f, yaw, 0f);
+        pitchPoint.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
 
-        Quaternion rotation = Quaternion.Euler(
-            verticalAngle,
-            horizontalAngle,
-            0
-        );  
-
-        Vector3 targetPosition = target.position + Vector3.up * height;
-
-        Camera.main.transform.position = 
-            targetPosition + rotation * Vector3.back * distance;
-
-        Camera.main.transform.LookAt(targetPosition);
+    public Transform GetMovementReference()
+    {
+        return yawPoint;
     }
 }
